@@ -1,17 +1,19 @@
 // lib/services/evaluacion.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Modelo que representa el resultado de una evaluación emocional
-/// completada por un estudiante.
 class Evaluacion {
+  final String?
+  id; // ID del documento en Firestore (útil para futuras ediciones/borrados)
   final String nombre;
   final DateTime fecha;
   final String texto;
-  final List<String> respuestas; // 5 respuestas del cuestionario
-  final String sentimiento; // "positivo" | "negativo" | "neutral"
-  final String riesgo; // "muy_alto" | "alto" | "medio" | "bajo" | "muy_bajo"
+  final List<String> respuestas;
+  final String sentimiento;
+  final String riesgo;
   final String recomendacion;
 
   Evaluacion({
+    this.id,
     required this.nombre,
     required this.fecha,
     required this.texto,
@@ -21,9 +23,9 @@ class Evaluacion {
     required this.recomendacion,
   });
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toFirestore() => {
     'nombre': nombre,
-    'fecha': fecha.toIso8601String(),
+    'fecha': Timestamp.fromDate(fecha),
     'texto': texto,
     'respuestas': respuestas,
     'sentimiento': sentimiento,
@@ -31,15 +33,17 @@ class Evaluacion {
     'recomendacion': recomendacion,
   };
 
-  factory Evaluacion.fromJson(Map<String, dynamic> json) {
+  factory Evaluacion.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data()!;
     return Evaluacion(
-      nombre: json['nombre'] as String,
-      fecha: DateTime.parse(json['fecha'] as String),
-      texto: json['texto'] as String,
-      respuestas: List<String>.from(json['respuestas'] as List),
-      sentimiento: json['sentimiento'] as String,
-      riesgo: json['riesgo'] as String,
-      recomendacion: json['recomendacion'] as String,
+      id: doc.id,
+      nombre: data['nombre'] as String,
+      fecha: (data['fecha'] as Timestamp).toDate(),
+      texto: data['texto'] as String,
+      respuestas: List<String>.from(data['respuestas'] as List),
+      sentimiento: data['sentimiento'] as String,
+      riesgo: data['riesgo'] as String,
+      recomendacion: data['recomendacion'] as String,
     );
   }
 
@@ -50,7 +54,6 @@ class Evaluacion {
         "${dosDigitos(d.hour)}:${dosDigitos(d.minute)}";
   }
 
-  /// Agrupa "alto" y "muy_alto" como un solo nivel para las estadísticas.
   String get riesgoAgrupado {
     if (riesgo == 'alto' || riesgo == 'muy_alto') return 'alto';
     if (riesgo == 'bajo' || riesgo == 'muy_bajo') return 'bajo';

@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class GeminiService {
-  static const String _apiKey = "AQ.Ab8RN6IS998ilGSPqSJMHwJ-3iTX0SvsIpou8Y_dbdCMaH9rIw";
+  static const String _apiKey =
+      "AQ.Ab8RN6IS998ilGSPqSJMHwJ-3iTX0SvsIpou8Y_dbdCMaH9rIw";
   static const String _model = "gemini-2.5-flash";
   static const String _baseUrl =
       "https://generativelanguage.googleapis.com/v1beta/models/$_model:generateContent";
@@ -26,26 +27,26 @@ Usuario dice: "$userText"
 """;
 
     try {
-      final response = await http.post(
-        uri,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "contents": [
-            {
-              "parts": [{"text": prompt}]
-            }
-          ],
-          "generationConfig": {
-            "maxOutputTokens": 450,
-            "temperature": 0.75,
-          },
-        }),
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .post(
+            uri,
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode({
+              "contents": [
+                {
+                  "parts": [
+                    {"text": prompt},
+                  ],
+                },
+              ],
+              "generationConfig": {"maxOutputTokens": 450, "temperature": 0.75},
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final text =
-            data["candidates"]?[0]?["content"]?["parts"]?[0]?["text"];
+        final text = data["candidates"]?[0]?["content"]?["parts"]?[0]?["text"];
         return text?.trim() ?? "No obtuve respuesta, intenta de nuevo.";
       } else {
         final body = jsonDecode(response.body);

@@ -1,14 +1,13 @@
 // lib/models/usuario.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Modelo que representa a un usuario registrado en la app
-/// (puede ser Estudiante o Docente).
 class Usuario {
   final String nombre;
   final String apellido;
   final int edad;
-  final String rol; // "Estudiante" o "Docente"
-  final String email; // Generado automáticamente: Nombre.Rol@gmail.com
-  final String password; // Contraseña creada por el usuario
+  final String rol;
+  final String email;
+  final String password;
 
   Usuario({
     required this.nombre,
@@ -37,6 +36,10 @@ class Usuario {
       email: json['email'] as String,
       password: json['password'] as String,
     );
+  }
+
+  factory Usuario.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    return Usuario.fromJson(doc.data()!);
   }
 
   String get nombreCompleto => '$nombre $apellido';

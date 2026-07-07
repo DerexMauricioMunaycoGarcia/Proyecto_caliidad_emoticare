@@ -108,7 +108,9 @@ class _StudentScreenState extends State<StudentScreen>
   }
 
   IconData get _iconoPasoActual =>
-      _currentStep == 0 ? Icons.edit_note_rounded : _iconosPreguntas[_currentStep - 1];
+      _currentStep == 0
+          ? Icons.edit_note_rounded
+          : _iconosPreguntas[_currentStep - 1];
 
   bool _pasoValido(int paso) {
     if (paso == 0) return _textController.text.trim().isNotEmpty;
@@ -189,7 +191,11 @@ class _StudentScreenState extends State<StudentScreen>
       builder:
           (context) => Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 500),
+              constraints: BoxConstraints(
+                maxWidth: 500,
+                maxHeight:
+                    MediaQuery.of(context).size.height * 0.85, // 👈 agregado
+              ),
               child: Dialog(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
@@ -209,315 +215,362 @@ class _StudentScreenState extends State<StudentScreen>
                       ),
                     ],
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppPalette.indigo, AppPalette.indigoDeep],
-                          ),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppPalette.indigo.withOpacity(0.3),
-                              blurRadius: 20,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.check_circle_outline,
-                          color: Colors.white,
-                          size: 48,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        "Evaluación Completada",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: _isDark ? Colors.white : const Color(0xFF1E293B),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Hemos analizado tu evaluación emocional",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: _isDark ? Colors.white70 : Colors.grey[600],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 24),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppPalette.indigo.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: AppPalette.indigo.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(
-                                Icons.person_rounded,
-                                color: AppPalette.indigo,
-                                size: 24,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Estudiante",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: _isDark
-                                          ? Colors.white60
-                                          : const Color(0xFF64748B),
-                                    ),
-                                  ),
-                                  Text(
-                                    widget.username,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: _isDark
-                                          ? Colors.white
-                                          : const Color(0xFF1E293B),
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors:
-                                sentimiento == "positivo"
-                                    ? [AppPalette.sage, const Color(0xFF3E8A6C)]
-                                    : (sentimiento == "negativo"
-                                        ? [AppPalette.coral, const Color(0xFFC94B62)]
-                                        : [AppPalette.amber, const Color(0xFFD9873C)]),
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              sentimiento == "positivo"
-                                  ? Icons.sentiment_satisfied_rounded
-                                  : (sentimiento == "negativo"
-                                      ? Icons.sentiment_dissatisfied_rounded
-                                      : Icons.sentiment_neutral_rounded),
-                              color: Colors.white,
-                              size: 32,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Sentimiento detectado",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white70,
-                                    ),
-                                  ),
-                                  Text(
-                                    sentimiento.toUpperCase(),
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: _isDark ? AppPalette.navyCardAlt : Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: _isDark ? Colors.white24 : Colors.grey[300]!,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: _isDark ? AppPalette.navyCard : Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                nivelRiesgo.toLowerCase().contains("alto")
-                                    ? Icons.warning_rounded
-                                    : (nivelRiesgo.toLowerCase().contains("medio")
-                                        ? Icons.info_rounded
-                                        : Icons.check_circle_rounded),
-                                color: nivelRiesgo.toLowerCase().contains("alto")
-                                    ? AppPalette.coral
-                                    : (nivelRiesgo.toLowerCase().contains("medio")
-                                        ? AppPalette.amber
-                                        : AppPalette.sage),
-                                size: 24,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Nivel de riesgo",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: _isDark
-                                          ? Colors.white60
-                                          : const Color(0xFF64748B),
-                                    ),
-                                  ),
-                                  Text(
-                                    nivelRiesgo.replaceAll('_', ' ').toUpperCase(),
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: _isDark
-                                          ? Colors.white
-                                          : const Color(0xFF1E293B),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppPalette.indigo.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppPalette.indigo.withOpacity(0.3)),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.lightbulb_rounded,
-                                  color: AppPalette.indigo,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  "Recomendación",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppPalette.indigo,
-                                  ),
-                                ),
+                  child: SingleChildScrollView(
+                    // 👈 agregado
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                AppPalette.indigo,
+                                AppPalette.indigoDeep,
                               ],
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              recomendacion,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: _isDark ? Colors.white70 : const Color(0xFF475569),
-                                height: 1.5,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppPalette.indigo.withOpacity(0.3),
+                                blurRadius: 20,
+                                spreadRadius: 2,
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Container(
-                        width: double.infinity,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppPalette.indigo, AppPalette.indigoDeep],
+                            ],
                           ),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppPalette.indigo.withOpacity(0.4),
-                              blurRadius: 12,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
+                          child: const Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.white,
+                            size: 48,
+                          ),
                         ),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Row(
+                        const SizedBox(height: 24),
+                        Text(
+                          "Evaluación Completada",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color:
+                                _isDark
+                                    ? Colors.white
+                                    : const Color(0xFF1E293B),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Hemos analizado tu evaluación emocional",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: _isDark ? Colors.white70 : Colors.grey[600],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 24),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppPalette.indigo.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppPalette.indigo.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.person_rounded,
+                                  color: AppPalette.indigo,
+                                  size: 24,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(Icons.check_circle, color: Colors.white),
-                                    SizedBox(width: 12),
-                                    Text("Datos guardados correctamente"),
+                                    Text(
+                                      "Estudiante",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color:
+                                            _isDark
+                                                ? Colors.white60
+                                                : const Color(0xFF64748B),
+                                      ),
+                                    ),
+                                    Text(
+                                      widget.username,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            _isDark
+                                                ? Colors.white
+                                                : const Color(0xFF1E293B),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ],
                                 ),
-                                backgroundColor: AppPalette.sage,
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors:
+                                  sentimiento == "positivo"
+                                      ? [
+                                        AppPalette.sage,
+                                        const Color(0xFF3E8A6C),
+                                      ]
+                                      : (sentimiento == "negativo"
+                                          ? [
+                                            AppPalette.coral,
+                                            const Color(0xFFC94B62),
+                                          ]
+                                          : [
+                                            AppPalette.amber,
+                                            const Color(0xFFD9873C),
+                                          ]),
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                sentimiento == "positivo"
+                                    ? Icons.sentiment_satisfied_rounded
+                                    : (sentimiento == "negativo"
+                                        ? Icons.sentiment_dissatisfied_rounded
+                                        : Icons.sentiment_neutral_rounded),
+                                color: Colors.white,
+                                size: 32,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Sentimiento detectado",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white70,
+                                      ),
+                                    ),
+                                    Text(
+                                      sentimiento.toUpperCase(),
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color:
+                                _isDark
+                                    ? AppPalette.navyCardAlt
+                                    : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color:
+                                  _isDark ? Colors.white24 : Colors.grey[300]!,
                             ),
                           ),
-                          child: const Text(
-                            "Entendido",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color:
+                                      _isDark
+                                          ? AppPalette.navyCard
+                                          : Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  nivelRiesgo.toLowerCase().contains("alto")
+                                      ? Icons.warning_rounded
+                                      : (nivelRiesgo.toLowerCase().contains(
+                                            "medio",
+                                          )
+                                          ? Icons.info_rounded
+                                          : Icons.check_circle_rounded),
+                                  color:
+                                      nivelRiesgo.toLowerCase().contains("alto")
+                                          ? AppPalette.coral
+                                          : (nivelRiesgo.toLowerCase().contains(
+                                                "medio",
+                                              )
+                                              ? AppPalette.amber
+                                              : AppPalette.sage),
+                                  size: 24,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Nivel de riesgo",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color:
+                                            _isDark
+                                                ? Colors.white60
+                                                : const Color(0xFF64748B),
+                                      ),
+                                    ),
+                                    Text(
+                                      nivelRiesgo
+                                          .replaceAll('_', ' ')
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            _isDark
+                                                ? Colors.white
+                                                : const Color(0xFF1E293B),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppPalette.indigo.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: AppPalette.indigo.withOpacity(0.3),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.lightbulb_rounded,
+                                    color: AppPalette.indigo,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text(
+                                    "Recomendación",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppPalette.indigo,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                recomendacion,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color:
+                                      _isDark
+                                          ? Colors.white70
+                                          : const Color(0xFF475569),
+                                  height: 1.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Container(
+                          width: double.infinity,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                AppPalette.indigo,
+                                AppPalette.indigoDeep,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppPalette.indigo.withOpacity(0.4),
+                                blurRadius: 12,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.check_circle,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: 12),
+                                      Text("Datos guardados correctamente"),
+                                    ],
+                                  ),
+                                  backgroundColor: AppPalette.sage,
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              "Entendido",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ), // 👈 cierre del SingleChildScrollView
                 ),
               ),
             ),
@@ -615,7 +668,10 @@ class _StudentScreenState extends State<StudentScreen>
             SizedBox(width: 8),
             Text(
               "Evaluación Emocional",
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
@@ -702,16 +758,18 @@ class _StudentScreenState extends State<StudentScreen>
             Positioned(
               top: -80,
               right: -60,
-              child: _buildBlob(280, _accentColors[_currentStep].withOpacity(
-                _isDark ? 0.16 : 0.14,
-              )),
+              child: _buildBlob(
+                280,
+                _accentColors[_currentStep].withOpacity(_isDark ? 0.16 : 0.14),
+              ),
             ),
             Positioned(
               bottom: -100,
               left: -80,
-              child: _buildBlob(320, AppPalette.indigo.withOpacity(
-                _isDark ? 0.14 : 0.10,
-              )),
+              child: _buildBlob(
+                320,
+                AppPalette.indigo.withOpacity(_isDark ? 0.14 : 0.10),
+              ),
             ),
           ],
         ),
@@ -726,9 +784,7 @@ class _StudentScreenState extends State<StudentScreen>
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [color, color.withOpacity(0)],
-        ),
+        gradient: RadialGradient(colors: [color, color.withOpacity(0)]),
       ),
     );
   }
@@ -830,7 +886,8 @@ class _StudentScreenState extends State<StudentScreen>
     final partes = nombre.trim().split(RegExp(r'\s+'));
     if (partes.isEmpty || partes.first.isEmpty) return "?";
     if (partes.length == 1) return partes.first.substring(0, 1).toUpperCase();
-    return (partes[0].substring(0, 1) + partes[1].substring(0, 1)).toUpperCase();
+    return (partes[0].substring(0, 1) + partes[1].substring(0, 1))
+        .toUpperCase();
   }
 
   // --- TARJETA DEL WIZARD (A) ---
@@ -914,7 +971,8 @@ class _StudentScreenState extends State<StudentScreen>
                   icon: const Icon(Icons.arrow_back_rounded, size: 18),
                   label: const Text("Atrás"),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: _isDark ? Colors.white70 : const Color(0xFF475569),
+                    foregroundColor:
+                        _isDark ? Colors.white70 : const Color(0xFF475569),
                     side: BorderSide(
                       color: _isDark ? Colors.white24 : Colors.grey[300]!,
                     ),
@@ -1015,7 +1073,9 @@ class _StudentScreenState extends State<StudentScreen>
           controller: _textController,
           maxLines: 5,
           maxLength: _maxChars,
-          style: TextStyle(color: _isDark ? Colors.white : const Color(0xFF1E293B)),
+          style: TextStyle(
+            color: _isDark ? Colors.white : const Color(0xFF1E293B),
+          ),
           decoration: InputDecoration(
             hintText: "Ej: Hoy me sentí un poco cansado, pero motivado...",
             hintStyle: TextStyle(
@@ -1041,7 +1101,8 @@ class _StudentScreenState extends State<StudentScreen>
                 width: 2,
               ),
             ),
-            errorText: mostrarError ? "Cuéntanos algo antes de continuar" : null,
+            errorText:
+                mostrarError ? "Cuéntanos algo antes de continuar" : null,
           ),
         ),
         const SizedBox(height: 8),
@@ -1094,7 +1155,9 @@ class _StudentScreenState extends State<StudentScreen>
                       color:
                           seleccionado
                               ? color
-                              : (_isDark ? AppPalette.navyCardAlt : Colors.grey[50]),
+                              : (_isDark
+                                  ? AppPalette.navyCardAlt
+                                  : Colors.grey[50]),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
                         color:
@@ -1102,7 +1165,9 @@ class _StudentScreenState extends State<StudentScreen>
                                 ? color
                                 : (mostrarError
                                     ? AppPalette.coral
-                                    : (_isDark ? Colors.white12 : Colors.grey.shade300)),
+                                    : (_isDark
+                                        ? Colors.white12
+                                        : Colors.grey.shade300)),
                         width: seleccionado ? 0 : 1.4,
                       ),
                     ),
@@ -1163,7 +1228,7 @@ class _StudentScreenState extends State<StudentScreen>
     final accent = _accentColors[_currentStep];
 
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: _isDark ? AppPalette.navyCard : Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -1177,12 +1242,13 @@ class _StudentScreenState extends State<StudentScreen>
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: 8),
+          const SizedBox(height: 2), // antes: 4
           AnimatedContainer(
             duration: const Duration(milliseconds: 400),
-            width: 140,
-            height: 140,
+            width: 84, // antes: 100
+            height: 84, // antes: 100
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: RadialGradient(
@@ -1195,8 +1261,8 @@ class _StudentScreenState extends State<StudentScreen>
             child: Center(
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
-                width: 84,
-                height: 84,
+                width: 54, // antes: 64
+                height: 54, // antes: 64
                 decoration: BoxDecoration(
                   color: accent,
                   shape: BoxShape.circle,
@@ -1208,71 +1274,165 @@ class _StudentScreenState extends State<StudentScreen>
                     ),
                   ],
                 ),
-                child: Icon(_iconoPasoActual, color: Colors.white, size: 38),
+                child: Icon(
+                  _iconoPasoActual,
+                  color: Colors.white,
+                  size: 24,
+                ), // antes: 28
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 10), // antes: 14
           Text(
             _preguntasCortas[_currentStep],
             style: TextStyle(
-              fontSize: 17,
+              fontSize: 15, // antes: 16
               fontWeight: FontWeight.bold,
               color: _isDark ? Colors.white : const Color(0xFF1E293B),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 4), // antes: 6
           Text(
             _tips[_currentStep],
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 14,
-              height: 1.5,
+              fontSize: 12.5, // antes: 13
+              height: 1.35, // antes: 1.4
               color: _isDark ? Colors.white70 : Colors.grey[600],
             ),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 14), // antes: 20
           Divider(color: _isDark ? Colors.white12 : Colors.grey[200]),
-          const SizedBox(height: 16),
-          Column(
-            children: List.generate(_totalSteps, (i) {
-              final completado = i < _currentStep;
-              final actual = i == _currentStep;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Row(
-                  children: [
-                    Icon(
-                      completado
-                          ? Icons.check_circle_rounded
-                          : (actual
-                              ? Icons.radio_button_checked_rounded
-                              : Icons.radio_button_unchecked_rounded),
-                      size: 18,
-                      color:
-                          completado || actual
-                              ? _accentColors[i]
-                              : (_isDark ? Colors.white24 : Colors.grey[300]),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      _preguntasCortas[i],
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: actual ? FontWeight.bold : FontWeight.normal,
-                        color:
-                            actual
-                                ? (_isDark ? Colors.white : const Color(0xFF1E293B))
-                                : (_isDark ? Colors.white38 : Colors.grey[500]),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+          const SizedBox(height: 2), // antes: 4
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "RECORRIDO DE LA EVALUACIÓN",
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.6,
+                color: _isDark ? Colors.white38 : Colors.grey[500],
+              ),
+            ),
           ),
+          const SizedBox(height: 8), // antes: 12
+          _buildStepperTimeline(),
         ],
       ),
+    );
+  }
+
+  Widget _buildStepperTimeline() {
+    return Column(
+      children: List.generate(_totalSteps, (i) {
+        final completado = i < _currentStep;
+        final actual = i == _currentStep;
+        final esUltimo = i == _totalSteps - 1;
+        final color = _accentColors[i];
+
+        return IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    width: 22, // antes: 26
+                    height: 22, // antes: 26
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color:
+                          completado
+                              ? color
+                              : (actual
+                                  ? Colors.transparent
+                                  : (_isDark
+                                      ? Colors.white10
+                                      : Colors.grey[100])),
+                      border: Border.all(
+                        color:
+                            completado
+                                ? color
+                                : (actual
+                                    ? color
+                                    : (_isDark
+                                        ? Colors.white24
+                                        : Colors.grey[300]!)),
+                        width: actual ? 2 : 1,
+                      ),
+                    ),
+                    child: Center(
+                      child:
+                          completado
+                              ? const Icon(
+                                Icons.check_rounded,
+                                size: 13,
+                                color: Colors.white,
+                              ) // antes: 15
+                              : Text(
+                                "${i + 1}",
+                                style: TextStyle(
+                                  fontSize: 10, // antes: 11
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      actual
+                                          ? color
+                                          : (_isDark
+                                              ? Colors.white38
+                                              : Colors.grey[400]),
+                                ),
+                              ),
+                    ),
+                  ),
+                  if (!esUltimo)
+                    Expanded(
+                      child: Container(
+                        width: 2,
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 1,
+                        ), // antes: 2
+                        color:
+                            completado
+                                ? color.withOpacity(0.5)
+                                : (_isDark ? Colors.white12 : Colors.grey[200]),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(width: 10), // antes: 12
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: esUltimo ? 0 : 12,
+                    top: 2,
+                  ), // antes: 18 / 3
+                  child: Text(
+                    _preguntasCortas[i],
+                    style: TextStyle(
+                      fontSize: 12.5, // antes: 13
+                      fontWeight: actual ? FontWeight.bold : FontWeight.w500,
+                      color:
+                          actual
+                              ? (_isDark
+                                  ? Colors.white
+                                  : const Color(0xFF1E293B))
+                              : (completado
+                                  ? (_isDark
+                                      ? Colors.white70
+                                      : Colors.grey[700])
+                                  : (_isDark
+                                      ? Colors.white38
+                                      : Colors.grey[400])),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

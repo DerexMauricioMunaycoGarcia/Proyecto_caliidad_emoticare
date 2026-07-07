@@ -1,57 +1,38 @@
 // lib/services/user_storage_service.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:proyecto_flutter_ia/services/usuario.dart';
 
-import 'dart:convert';
-import 'package:proyecto_flutter_ia/services/usuario.dart';
-import 'package:proyecto_flutter_ia/services/usuario.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-/// Maneja el registro y consulta de usuarios guardados localmente
-/// usando SharedPreferences (persisten entre sesiones de la app).
 class UserStorageService {
-  static const String _key = 'usuarios_registrados';
-  
-  
+  static final CollectionReference<Map<String, dynamic>> _usuarios =
+      FirebaseFirestore.instance.collection('usuarios');
+
+  static String _docId(String email) => email.toLowerCase();
 
   /// Devuelve todos los usuarios registrados.
   static Future<List<Usuario>> obtenerUsuarios() async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString(_key);
-    if (data == null || data.isEmpty) return [];
-
-    final List decoded = jsonDecode(data);
-    return decoded
-        .map((e) => Usuario.fromJson(e as Map<String, dynamic>))
-        .toList();
+    final snapshot = await _usuarios.get();
+    return snapshot.docs.map((d) => Usuario.fromFirestore(d)).toList();
   }
 
-  /// Verifica si ya existe un usuario con ese correo (no distingue mayúsculas).
+  /// Verifica si ya existe un usuario con ese correo.
   static Future<bool> emailExiste(String email) async {
-    final usuarios = await obtenerUsuarios();
-    return usuarios.any(
-      (u) => u.email.toLowerCase() == email.toLowerCase(),
-    );
+    final doc = await _usuarios.doc(_docId(email)).get();
+    return doc.exists;
   }
 
-  /// Guarda un nuevo usuario en la lista persistida.
+  /// Guarda un nuevo usuario.
   static Future<void> guardarUsuario(Usuario usuario) async {
-    final usuarios = await obtenerUsuarios();
-    usuarios.add(usuario);
-
-    final prefs = await SharedPreferences.getInstance();
-    final data = jsonEncode(usuarios.map((u) => u.toJson()).toList());
-    await prefs.setString(_key, data);
+    await _usuarios.doc(_docId(usuario.email)).set(usuario.toJson());
   }
 
   /// Busca un usuario por su correo. Devuelve null si no existe.
   static Future<Usuario?> buscarPorEmail(String email) async {
-    final usuarios = await obtenerUsuarios();
-    for (final u in usuarios) {
-      if (u.email.toLowerCase() == email.toLowerCase()) return u;
-    }
-    return null;
+    final doc = await _usuarios.doc(_docId(email)).get();
+    if (!doc.exists) return null;
+    return Usuario.fromFirestore(doc);
   }
 
-  /// Valida correo + contraseña contra los usuarios registrados.
-  /// Devuelve el Usuario si las credenciales son correctas, o null si no.
+  /// Valida correo + contraseña.
   static Future<Usuario?> validarCredenciales(
     String email,
     String password,

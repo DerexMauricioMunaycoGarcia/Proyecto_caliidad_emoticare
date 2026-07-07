@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_flutter_ia/services/usuario.dart';
 import 'package:proyecto_flutter_ia/services/user_storage_service.dart';
-import 'package:proyecto_flutter_ia/services/usuario.dart';
 
-// 👈 Claves de acceso que ya usabas como credenciales fijas.
-// Ahora se usan para confirmar que la persona realmente
-// pertenece al rol que está seleccionando.
 const String _claveDocente = 'tutor123';
 const String _claveEstudiante = '123456';
 
@@ -24,13 +20,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  String? _rolSeleccionado; // "Estudiante" o "Docente"
+  String? _rolSeleccionado;
   bool _claveValidada = false;
   bool _isPasswordVisible = false;
   bool _isConfirmVisible = false;
   bool _enviando = false;
   bool _intentoEnviar = false;
   String? _errorGeneral;
+
+  // 👇 NUEVO: detecta si el tema activo es oscuro
+  bool get _isDark => Theme.of(context).brightness == Brightness.dark;
 
   @override
   void dispose() {
@@ -49,7 +48,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _onRolChanged(String rol) {
     setState(() {
       _rolSeleccionado = rol;
-      // Si cambia de rol, hay que volver a validar la clave de acceso.
       _claveValidada = false;
       _claveAccesoController.clear();
       _passwordController.clear();
@@ -63,10 +61,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-  // --- Validación de la nueva contraseña ---
-  bool get _tieneMayuscula => _passwordController.text.contains(RegExp(r'[A-Z]'));
+  bool get _tieneMayuscula =>
+      _passwordController.text.contains(RegExp(r'[A-Z]'));
   bool get _tieneNumero => _passwordController.text.contains(RegExp(r'[0-9]'));
-  bool get _tieneLetra => _passwordController.text.contains(RegExp(r'[a-zA-Z]'));
+  bool get _tieneLetra =>
+      _passwordController.text.contains(RegExp(r'[a-zA-Z]'));
   bool get _tieneLongitudMinima => _passwordController.text.length >= 8;
 
   bool get _passwordValida =>
@@ -108,15 +107,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (!_claveValidada) {
       setState(
-        () => _errorGeneral = "La clave de acceso para el rol seleccionado es incorrecta.",
+        () =>
+            _errorGeneral =
+                "La clave de acceso para el rol seleccionado es incorrecta.",
       );
       return;
     }
 
     if (!_passwordValida) {
       setState(
-        () => _errorGeneral =
-            "La contraseña debe tener letra, mayúscula, número y al menos 8 caracteres.",
+        () =>
+            _errorGeneral =
+                "La contraseña debe tener letra, mayúscula, número y al menos 8 caracteres.",
       );
       return;
     }
@@ -156,126 +158,117 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _mostrarDialogoExito(email);
   }
 
- void _mostrarDialogoExito(String email) {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) {
-      return Dialog(
-        insetPadding: const EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 24,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 420,
+  void _mostrarDialogoExito(String email) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 24,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(30),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF10B981),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check_rounded,
-                    color: Colors.white,
-                    size: 46,
-                  ),
-                ),
-
-                const SizedBox(height: 22),
-
-                const Text(
-                  "¡Registro exitoso!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E293B),
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
-                const Text(
-                  "Tu correo de acceso es:",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 15,
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 14,
-                    horizontal: 18,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6).withOpacity(0.10),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFF3B82F6).withOpacity(0.30),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          backgroundColor: _isDark ? const Color(0xFF1E293B) : Colors.white,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Padding(
+              padding: const EdgeInsets.all(30),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF10B981),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check_rounded,
+                      color: Colors.white,
+                      size: 46,
                     ),
                   ),
-                  child: SelectableText(
-                    email,
+                  const SizedBox(height: 22),
+                  Text(
+                    "¡Registro exitoso!",
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: TextStyle(
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E3A8A),
+                      color: _isDark ? Colors.white : const Color(0xFF1E293B),
                     ),
                   ),
-                ),
-
-                const SizedBox(height: 28),
-
-                SizedBox(
-                  width: 220,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2563EB),
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Tu correo de acceso es:",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: _isDark ? Colors.white60 : Colors.grey,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                      horizontal: 18,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3B82F6).withOpacity(0.10),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFF3B82F6).withOpacity(0.30),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      "Ir a iniciar sesión",
+                    child: SelectableText(
+                      email,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: _isDark ? Colors.white : const Color(0xFF1E3A8A),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 28),
+                  SizedBox(
+                    width: 220,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2563EB),
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        "Ir a iniciar sesión",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -285,11 +278,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF1E3A8A),
-              Color(0xFF3B82F6),
-              Color(0xFF60A5FA),
-            ],
+            colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6), Color(0xFF60A5FA)],
           ),
         ),
         child: SafeArea(
@@ -297,6 +286,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Card(
+                color:
+                    _isDark
+                        ? const Color(0xFF1E293B)
+                        : Colors.white, // 👈 NUEVO
                 elevation: 12,
                 shadowColor: Colors.black.withOpacity(0.3),
                 shape: RoundedRectangleBorder(
@@ -314,15 +307,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           IconButton(
                             onPressed: () => Navigator.pop(context),
                             icon: const Icon(Icons.arrow_back),
-                            color: const Color(0xFF1E3A8A),
+                            color:
+                                _isDark
+                                    ? Colors.white
+                                    : const Color(0xFF1E3A8A), // 👈 NUEVO
                           ),
                           const SizedBox(width: 4),
-                          const Text(
+                          Text(
                             "Crear cuenta",
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF1E3A8A),
+                              color:
+                                  _isDark
+                                      ? Colors.white
+                                      : const Color(0xFF1E3A8A), // 👈 NUEVO
                             ),
                           ),
                         ],
@@ -330,7 +329,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 8),
                       Text(
                         "Completa tus datos para registrarte",
-                        style: TextStyle(color: Colors.grey[600]),
+                        style: TextStyle(
+                          color:
+                              _isDark
+                                  ? Colors.white60
+                                  : Colors.grey[600], // 👈 NUEVO
+                        ),
                       ),
                       const SizedBox(height: 24),
 
@@ -339,7 +343,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         label: "Nombre",
                         icon: Icons.badge_outlined,
                         error:
-                            _intentoEnviar && _nombreController.text.trim().isEmpty
+                            _intentoEnviar &&
+                                    _nombreController.text.trim().isEmpty
                                 ? "Este campo es obligatorio"
                                 : null,
                       ),
@@ -363,23 +368,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         icon: Icons.cake_outlined,
                         keyboardType: TextInputType.number,
                         error:
-                            _intentoEnviar && _edadController.text.trim().isEmpty
+                            _intentoEnviar &&
+                                    _edadController.text.trim().isEmpty
                                 ? "Este campo es obligatorio"
                                 : null,
                       ),
                       const SizedBox(height: 20),
 
-                      // --- Selector de rol ---
                       Row(
-                        children: const [
+                        children: [
                           Text(
                             "¿Eres docente o estudiante?",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF1E293B),
+                              color:
+                                  _isDark
+                                      ? Colors.white
+                                      : const Color(0xFF1E293B), // 👈 NUEVO
                             ),
                           ),
-                          Text(
+                          const Text(
                             " *",
                             style: TextStyle(
                               color: Colors.red,
@@ -414,7 +422,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ],
 
-                      // --- Clave de acceso por rol ---
                       if (_rolSeleccionado != null) ...[
                         const SizedBox(height: 20),
                         _campoTexto(
@@ -444,16 +451,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ],
 
-                      // --- Crear contraseña (se desbloquea solo si la clave es válida) ---
                       if (_claveValidada) ...[
                         const SizedBox(height: 20),
-                        const Divider(),
+                        Divider(
+                          color: _isDark ? Colors.white12 : null,
+                        ), // 👈 NUEVO
                         const SizedBox(height: 12),
-                        const Text(
+                        Text(
                           "Crea tu contraseña de acceso",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1E293B),
+                            color:
+                                _isDark
+                                    ? Colors.white
+                                    : const Color(0xFF1E293B), // 👈 NUEVO
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -501,8 +512,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             onPressed:
                                 () => setState(
-                                  () =>
-                                      _isConfirmVisible = !_isConfirmVisible,
+                                  () => _isConfirmVisible = !_isConfirmVisible,
                                 ),
                           ),
                           error:
@@ -556,22 +566,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.red[50],
+                            color:
+                                _isDark
+                                    ? Colors.red.withOpacity(0.15) // 👈 NUEVO
+                                    : Colors.red[50],
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.red[200]!),
+                            border: Border.all(
+                              color:
+                                  _isDark
+                                      ? Colors.red.withOpacity(0.4) // 👈 NUEVO
+                                      : Colors.red[200]!,
+                            ),
                           ),
                           child: Row(
                             children: [
                               Icon(
                                 Icons.error_outline,
-                                color: Colors.red[700],
+                                color:
+                                    _isDark
+                                        ? Colors.red[300]
+                                        : Colors.red[700], // 👈 NUEVO
                                 size: 20,
                               ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   _errorGeneral!,
-                                  style: TextStyle(color: Colors.red[700]),
+                                  style: TextStyle(
+                                    color:
+                                        _isDark
+                                            ? Colors.red[300]
+                                            : Colors.red[700], // 👈 NUEVO
+                                  ),
                                 ),
                               ),
                             ],
@@ -600,10 +626,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
           color:
               seleccionado
                   ? const Color(0xFF3B82F6).withOpacity(0.1)
-                  : Colors.grey[50],
+                  : (_isDark
+                      ? Colors.white.withOpacity(0.04)
+                      : Colors.grey[50]), // 👈 NUEVO
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: seleccionado ? const Color(0xFF3B82F6) : Colors.grey[300]!,
+            color:
+                seleccionado
+                    ? const Color(0xFF3B82F6)
+                    : (_isDark
+                        ? Colors.white24
+                        : Colors.grey[300]!), // 👈 NUEVO
             width: seleccionado ? 2 : 1,
           ),
         ),
@@ -612,7 +645,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Icon(
               icon,
               color:
-                  seleccionado ? const Color(0xFF3B82F6) : Colors.grey[500],
+                  seleccionado
+                      ? const Color(0xFF3B82F6)
+                      : (_isDark
+                          ? Colors.white38
+                          : Colors.grey[500]), // 👈 NUEVO
             ),
             const SizedBox(height: 6),
             Text(
@@ -621,8 +658,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 fontWeight: FontWeight.w600,
                 color:
                     seleccionado
-                        ? const Color(0xFF1E3A8A)
-                        : Colors.grey[700],
+                        ? (_isDark
+                            ? Colors.white
+                            : const Color(0xFF1E3A8A)) // 👈 NUEVO
+                        : (_isDark
+                            ? Colors.white54
+                            : Colors.grey[700]), // 👈 NUEVO
               ),
             ),
           ],
@@ -651,14 +692,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Icon(
           cumple ? Icons.check_circle : Icons.radio_button_unchecked,
           size: 16,
-          color: cumple ? const Color(0xFF10B981) : Colors.grey[400],
+          color:
+              cumple
+                  ? const Color(0xFF10B981)
+                  : (_isDark ? Colors.white24 : Colors.grey[400]), // 👈 NUEVO
         ),
         const SizedBox(width: 4),
         Text(
           texto,
           style: TextStyle(
             fontSize: 12,
-            color: cumple ? const Color(0xFF10B981) : Colors.grey[500],
+            color:
+                cumple
+                    ? const Color(0xFF10B981)
+                    : (_isDark ? Colors.white38 : Colors.grey[500]), // 👈 NUEVO
           ),
         ),
       ],
@@ -680,15 +727,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
       obscureText: obscure,
       keyboardType: keyboardType,
       onChanged: onChanged,
+      style: TextStyle(
+        color: _isDark ? Colors.white : const Color(0xFF1E293B),
+      ), // 👈 NUEVO
       decoration: InputDecoration(
         labelText: label,
+        labelStyle: TextStyle(
+          color: _isDark ? Colors.white54 : Colors.grey[600],
+        ), // 👈 NUEVO
         prefixIcon: Icon(icon, color: const Color(0xFF3B82F6)),
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: error != null ? Colors.red : Colors.grey[300]!,
+            color:
+                error != null
+                    ? Colors.red
+                    : (_isDark
+                        ? Colors.white24
+                        : Colors.grey[300]!), // 👈 NUEVO
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -699,7 +757,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         filled: true,
-        fillColor: Colors.grey[50],
+        fillColor:
+            _isDark
+                ? Colors.white.withOpacity(0.06)
+                : Colors.grey[50], // 👈 NUEVO
         errorText: error,
       ),
     );

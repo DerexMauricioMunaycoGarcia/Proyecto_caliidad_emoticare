@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:proyecto_flutter_ia/firebase_options.dart';
 import 'package:proyecto_flutter_ia/theme/theme_controller.dart';
 import 'screens/login_screen.dart';
-import 'package:proyecto_flutter_ia/services/evaluacion_storage_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
